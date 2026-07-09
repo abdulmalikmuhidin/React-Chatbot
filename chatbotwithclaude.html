@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #14161b;
+            --surface: #1d2028;
+            --surface-border: #2a2e38;
+            --accent: #6c7bff;
+            --accent-dim: #4a52a8;
+            --text-primary: #ecedf2;
+            --text-secondary: #8b8f9b;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+        }
+
+        .chatbot-container {
+            font-family: 'Inter', Arial, sans-serif;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+            display: grid;
+            grid-template-rows: auto auto 1fr auto;
+            height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .chat-header {
+            padding: 28px 20px 16px 20px;
+        }
+
+        .chat-header-eyebrow {
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin: 0 0 6px 0;
+            font-weight: 600;
+        }
+
+        .chat-header-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chat-divider {
+            border: none;
+            border-top: 1px solid var(--surface-border);
+            margin: 0 20px;
+        }
+
+        .chat-messages-container {
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 20px;
+        }
+
+        .chat-messages-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chat-message-container-user,
+        .chat-message-container-robot {
+            display: flex;
+            margin-bottom: 14px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .chat-message-container-user {
+            justify-content: flex-end;
+        }
+
+        .chat-message-container-robot {
+            justify-content: flex-start;
+        }
+
+        .chat-message-contents {
+            max-width: 75%;
+            padding: 11px 16px;
+            margin: 0;
+            font-size: 14.5px;
+            line-height: 1.5;
+            overflow-wrap: break-word;
+        }
+
+        .chat-message-container-user .chat-message-contents {
+            background: var(--accent);
+            color: #ffffff;
+            border-radius: var(--radius) var(--radius) 4px var(--radius);
+        }
+
+        .chat-message-container-robot .chat-message-contents {
+            background: transparent;
+            border: 1px solid var(--surface-border);
+            color: var(--text-primary);
+            border-radius: var(--radius) var(--radius) var(--radius) 4px;
+        }
+
+        .chat-input-container {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            padding: 16px 20px 24px 20px;
+        }
+
+        .chat-input {
+            font-family: 'Inter', sans-serif;
+            font-size: 14.5px;
+            padding: 13px 16px;
+            border: 1px solid var(--surface-border);
+            background: var(--surface);
+            color: var(--text-primary);
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+
+        .send-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #7d8bff;
+        }
+
+        .send-button:disabled {
+            background: var(--accent-dim);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 14px 16px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            30% {
+                transform: translateY(-4px);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .chat-message-container-user,
+            .chat-message-container-robot,
+            .typing-indicator span {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="js-container"></div>
+
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+    <script src="https://unpkg.com/supersimpledev/chatbot.js"></script>
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+
+    <script type="text/babel">
+
+        function ChatInput({ chatMessages, setChatMessages }) {
+
+            const [inputText, setInputText] = React.useState('');
+            const [isLoading, setIsLoading] = React.useState(false);
+
+            function saveInputText(event) {
+                setInputText(event.target.value);
+            }
+
+            async function sendMessage() {
+
+                if (inputText.trim() === '') {
+                    return;
+                }
+
+                if (isLoading) {
+                    return;
+                }
+
+                const newChatMessages = [
+                    ...chatMessages,
+                    {
+                        message: inputText,
+                        sender: "user",
+                        id: crypto.randomUUID()
+                    }
+                ];
+
+                setChatMessages(newChatMessages);
+
+                const userMessage = inputText;
+                setInputText('');
+
+                setIsLoading(true);
+
+                const response =
+                    await Chatbot.getResponseAsync(userMessage);
+
+                setChatMessages([
+                    ...newChatMessages,
+                    {
+                        message: response,
+                        sender: "robot",
+                        id: crypto.randomUUID()
+                    }
+                ]);
+
+                setIsLoading(false);
+            }
+
+            function usingEnterKey(event) {
+
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+
+                else if (event.key === 'Escape') {
+                    setInputText('');
+                }
+            }
+
+            return (
+                <div className="chat-input-container">
+                    <input
+                        className="chat-input"
+                        placeholder="Send a message to Chatbot"
+                        onChange={saveInputText}
+                        value={inputText}
+                        onKeyDown={usingEnterKey}
+                    />
+
+                    <button
+                        onClick={sendMessage}
+                        disabled={isLoading || inputText.trim() === ''}
+                        className="send-button"
+                    >
+                        Send
+                    </button>
+                </div>
+            );
+        }
+
+        function ChatMessage({ message, sender }) {
+
+            return (
+                <div className={`chat-message-container-${sender}`}>
+                    <p className="chat-message-contents">{message}</p>
+                </div>
+            );
+        }
+
+        function TypingIndicator() {
+            return (
+                <div className="chat-message-container-robot">
+                    <div className="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            );
+        }
+
+        function ChatMessages({ chatMessages, isLoading }) {
+
+            return (
+                <div className="chat-messages-container">
+                    {chatMessages.map((chatMessage) => {
+
+                        return (
+                            <ChatMessage
+                                key={chatMessage.id}
+                                message={chatMessage.message}
+                                sender={chatMessage.sender}
+                            />
+                        );
+
+                    })}
+                    {isLoading && <TypingIndicator />}
+                </div>
+            );
+        }
+
+        function App() {
+
+            const [chatMessages, setChatMessages] = React.useState([
+                {
+                    message: "Hello Chatbot",
+                    sender: "user",
+                    id: 1
+                },
+                {
+                    message: "Hello! How can I help you?",
+                    sender: "robot",
+                    id: 2
+                }
+            ]);
+
+            return (
+                <div className="chatbot-container">
+                    <div className="chat-header">
+                        <p className="chat-header-eyebrow">Assistant</p>
+                        <h1 className="chat-header-title">Chatbot</h1>
+                    </div>
+
+                    <hr className="chat-divider" />
+
+                    <ChatMessages
+                        chatMessages={chatMessages}
+                    />
+
+                    <ChatInput
+                        chatMessages={chatMessages}
+                        setChatMessages={setChatMessages}
+                    />
+                </div>
+            );
+        }
+        const container = document.querySelector(".js-container");
+        ReactDOM.createRoot(container).render(<App />);
+
+    </script>
+</body>
+
+</html>
