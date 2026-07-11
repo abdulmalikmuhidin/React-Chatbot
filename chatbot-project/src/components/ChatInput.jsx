@@ -60,8 +60,8 @@ export function ChatInput({ chatMessages, setChatMessages }) {
       />
       <button
         onClick={sendMessage}
-        className="send-button"
-      >Send</button>
+        className="send-button"   
+      >Send</button> 
     </div>
   );
 }
