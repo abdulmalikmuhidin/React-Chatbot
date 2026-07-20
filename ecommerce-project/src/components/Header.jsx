@@ -5,7 +5,7 @@ export function Header(){
            <>
                  <div className="header">
     <div className="left-section">
-      <Link to="index.html" className="header-link">
+      <Link to="/" className="header-link">
         <img className="logo" src="images/logo-white.png" />
         <img className="mobile-logo" src="images/mobile-logo-white.png" />
       </Link>
@@ -18,7 +18,7 @@ export function Header(){
         <img className="search-icon" src="images/icons/search-icon.png" />
       </button>
     </div>
-
+ 
     <div className="right-section">
       <Link className="orders-link header-link" to="orders">
 

@@ -1,6 +1,8 @@
 import './TrackingPage.css';
+import { Header } from '../components/Header';
 export function  TrackingPage(){
     return (<>
+    <Header/>
        <div className="left-section">
         <a href="index.html" className="header-link">
           <img className="logo"
