@@ -3,9 +3,17 @@ import {Header} from '../components/Header.jsx'
 import {products} from '../../starting-code/data/products.js'
 
 export function HomePage() {
+  fetch('http://localhost:4000/products')
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error('Error fetching products:', error);
+  }); 
     return (<> 
    <Header/>
-  
+         
         
   <div className="home-page">
     <div className="products-grid">

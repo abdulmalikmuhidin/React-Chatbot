@@ -1,4 +1,5 @@
 import { Header } from '../components/Header.jsx';
+import { Link } from 'react-router-dom';
 import './OrdersPage.css'
 export function OrdersPage() {
     return (<>
@@ -50,11 +51,11 @@ export function OrdersPage() {
             </div>
 
             <div className="product-actions">
-              <link to="tracking">
+              <Link to="/tracking">
                 <button className="track-package-button button-secondary">
                   Track package
                 </button>
-              </link>
+              </Link>
             </div>
 
             <div className="product-image-container">
@@ -76,13 +77,13 @@ export function OrdersPage() {
                 <span className="buy-again-message">Add to Cart</span>
               </button>
             </div>
-
+ 
             <div className="product-actions">
-              <link to="tracking">
+              <Link to="/tracking">
                 <button className="track-package-button button-secondary">
                   Track package
                 </button>
-              </link>
+              </Link>
             </div>
           </div>
         </div>
@@ -129,11 +130,11 @@ export function OrdersPage() {
             </div>
 
             <div className="product-actions">
-              <link to="tracking">
+              <Link to="/tracking">
                 <button className="track-package-button button-secondary">
                   Track package
                 </button>
-              </link>
+              </Link>
             </div>
           </div>
         </div>
